@@ -9,7 +9,7 @@ import javax.persistence.*;
 public class Cart {
 
     @EmbeddedId
-    private CartKey id;
+    private CartKey id = new CartKey();
 
     @ManyToOne
     @MapsId("customerId")

@@ -12,6 +12,6 @@ import lombok.Setter;
 public class CategoryHelper {
 
     private String name;
-    private Long parentId;
+    private long parentId;
 
 }

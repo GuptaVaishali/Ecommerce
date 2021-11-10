@@ -14,6 +14,29 @@ public class CategoryMetadataFieldKey implements Serializable {
     @Column(name = "CATEGORY_METADATA_FIELD_ID")
     private long categoryMetadataFieldId;
 
+    public CategoryMetadataFieldKey() {
+    }
+
+    public CategoryMetadataFieldKey(long categoryId, long categoryMetadataFieldId) {
+        this.categoryId = categoryId;
+        this.categoryMetadataFieldId = categoryMetadataFieldId;
+    }
+
+    public long getCategoryId() {
+        return categoryId;
+    }
+
+    public void setCategoryId(long categoryId) {
+        this.categoryId = categoryId;
+    }
+
+    public long getCategoryMetadataFieldId() {
+        return categoryMetadataFieldId;
+    }
+
+    public void setCategoryMetadataFieldId(long categoryMetadataFieldId) {
+        this.categoryMetadataFieldId = categoryMetadataFieldId;
+    }
 
     @Override
     public boolean equals(Object o) {

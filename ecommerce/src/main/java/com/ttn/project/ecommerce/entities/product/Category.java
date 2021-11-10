@@ -1,6 +1,11 @@
 package com.ttn.project.ecommerce.entities.product;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import javax.persistence.*;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Entity
@@ -9,6 +14,8 @@ public class Category {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
+    @NotEmpty
+    @NotNull
     private String name;
 
     @ManyToOne(cascade = CascadeType.MERGE)
@@ -41,6 +48,7 @@ public class Category {
         this.name = name;
     }
 
+    @JsonBackReference(value = "category-subcategory")
     public Category getParentCategory() {
         return parentCategory;
     }
@@ -49,6 +57,7 @@ public class Category {
         this.parentCategory = parentCategory;
     }
 
+    @JsonManagedReference(value = "category-subcategory")
     public List<Category> getSubCategories() {
         return subCategories;
     }
@@ -65,6 +74,7 @@ public class Category {
         this.metadataFieldValues = metadataFieldValues;
     }
 
+    @JsonManagedReference(value = "product-category")
     public List<Product> getProducts() {
         return products;
     }

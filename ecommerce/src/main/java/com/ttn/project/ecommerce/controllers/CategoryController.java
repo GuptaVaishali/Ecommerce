@@ -21,6 +21,11 @@ public class CategoryController {
         return categoryService.createCategory(category);
     }
 
+    @PostMapping("/create-category1")
+    public String createCategory1(@RequestBody Category category){
+        return categoryService.createCategory1(category);
+    }
+
     @GetMapping("view-category/{categoryId}")
     public Category viewCategory(@PathVariable Long categoryId){
         return categoryService.viewCategory(categoryId);
@@ -31,9 +36,9 @@ public class CategoryController {
         return categoryService.viewAllCategories();
     }
 
-    @PutMapping("/update-category")
-    public String updateCategory(){
-        return categoryService.updateCategory();
+    @PutMapping("/update-category/{categoryId}/{categoryName}")
+    public String updateCategory(@PathVariable long categoryId, @PathVariable String categoryName){
+        return categoryService.updateCategory(categoryId, categoryName);
     }
 
 
