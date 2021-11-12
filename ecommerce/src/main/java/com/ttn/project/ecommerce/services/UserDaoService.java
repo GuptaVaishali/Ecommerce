@@ -54,6 +54,7 @@ public class UserDaoService {
         role1.setAuthority("ROLE_ADMIN");
         roles.add(role1);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setRoles(roles);
         return userRepository.save(user);
      }
 

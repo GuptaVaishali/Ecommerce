@@ -25,7 +25,7 @@ import java.util.List;
 public class UserController {
 
     @GetMapping("/users")
-    public List<User> retrieveAllEmployees() {
+    public List<User> retrieveAllUsers() {
         return userDaoService.readAllUsers();
     }
 
@@ -162,8 +162,8 @@ public class UserController {
         return "Logged out successfully";
     }
 
-    @GetMapping("/find-current-user")
-    public String findUser(){
+    @GetMapping("/find-current-customer")
+    public String findCurrentCustomer(){
         Customer customer = userDaoService.getLoggedInCustomer();
         return customer.getEmail() + " " + customer.getId() + " " + customer.getPassword() + " " +
                 customer.getFirstName() + " " + customer.getRoles();

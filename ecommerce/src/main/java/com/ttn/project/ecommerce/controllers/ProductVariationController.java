@@ -1,7 +1,9 @@
 package com.ttn.project.ecommerce.controllers;
 
 import com.ttn.project.ecommerce.entities.product.ProductVariation;
+import com.ttn.project.ecommerce.entities.registration.Seller;
 import com.ttn.project.ecommerce.services.ProductVariationService;
+import com.ttn.project.ecommerce.services.UserDaoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,6 +17,9 @@ public class ProductVariationController {
     @Autowired
     ProductVariationService productVariationService;
 
+    @Autowired
+    UserDaoService userDaoService;
+
     @PostMapping("/create-product-variation")
     public String createProductVariation(@Valid @RequestBody ProductVariation productVariation){
 
@@ -23,8 +28,9 @@ public class ProductVariationController {
 
     @GetMapping("/view-product-variation/{productVariationId}")
     public ProductVariation viewProductVariation(@PathVariable long productVariationId){
-
-        return productVariationService.viewProductVariation(productVariationId);
+        Seller seller = userDaoService.getLoggedInSeller();
+        long sellerId = seller.getId();
+        return productVariationService.viewProductVariation(sellerId,productVariationId);
     }
 
     @GetMapping("/view-all-product-variations/{productId}")
@@ -34,9 +40,10 @@ public class ProductVariationController {
     }
 
     @PutMapping("/update-product-variation/{productVariationId}")
-    public String updateProductVariation(@PathVariable long productVariationId){
+    public String updateProductVariation(@PathVariable long productVariationId,
+                                         @RequestBody ProductVariation productVariation){
 
-        return productVariationService.updateProductVariation(productVariationId);
+        return productVariationService.updateProductVariation(productVariationId, productVariation);
     }
 
 }

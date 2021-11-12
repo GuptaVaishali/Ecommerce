@@ -1,5 +1,7 @@
 package com.ttn.project.ecommerce.auditing;
 
+import com.ttn.project.ecommerce.entities.registration.Customer;
+import com.ttn.project.ecommerce.entities.registration.User;
 import com.ttn.project.ecommerce.security.AppUser;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -25,6 +27,12 @@ public class JpaAuditingConfiguration {
 //            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 //            AppUser appUser = (AppUser) authentication.getPrincipal();
 //            String name = appUser.getFirstName();
-//            return () -> Optional.ofNullable(name);
+//            String uname = getLoggedInUserName();
+//            System.out.println(">>>>>>>> name = " + uname);
+        //    return () -> Optional.ofNullable(uname);
+
+
+        //    return new AuditorAwareImpl();
         }
+
 }

@@ -28,8 +28,10 @@ public class ProductController {
     }
 
     @GetMapping("/view-product/{productId}")
-    public Product viewProduct(@PathVariable long productId){
-        return productDaoService.viewProduct(productId);
+    public Product viewProduct(@PathVariable long productId) throws Exception {
+        Seller seller = userDaoService.getLoggedInSeller();
+        long sellerId = seller.getId();
+        return productDaoService.viewProduct(sellerId,productId);
     }
 
     @GetMapping("/view-all-products")
@@ -39,13 +41,16 @@ public class ProductController {
 
     @PutMapping("/update-product/{productId}")
     public String updateProduct(@PathVariable long productId, @RequestBody Product product){
-
-        return productDaoService.updateProduct(productId,product);
+        Seller seller = userDaoService.getLoggedInSeller();
+        long sellerId = seller.getId();
+        return productDaoService.updateProduct(sellerId,productId,product);
     }
 
     @DeleteMapping("/delete-product/{productId}")
     public String deleteProduct(@PathVariable long productId){
-        return productDaoService.deleteProduct(productId);
+        Seller seller = userDaoService.getLoggedInSeller();
+        long sellerId = seller.getId();
+        return productDaoService.deleteProduct(sellerId,productId);
     }
 
     @PutMapping("/deactivate-product/{productId}")

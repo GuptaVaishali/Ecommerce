@@ -30,16 +30,15 @@ public class CategoryService {
                 "  categoryName   " + categoryName);
         Category parent = null;
 
-        // parent category should not exist with any product
-//        Optional<Product> product =
-//                productRepository.findByCategory(categoryRepository.findByName(categoryName).get());
-//        if (product.isPresent())
-//            return "Please do not insert leaf node category";
-
         // if parent category exists that is not null
         if (parentCategory != 0){
             if (categoryRepository.findById(parentCategory).get() != null){
                 parent = categoryRepository.findById(parentCategory).get();
+
+                // parent category should not exist with any product
+                List<Product> products = productRepository.findAllByCategory(parent);
+                if (products.size() != 0)
+                    return "Please do not insert leaf node category";
             }
         }
 

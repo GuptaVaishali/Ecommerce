@@ -13,5 +13,5 @@ public interface ProductRepository extends CrudRepository<Product,Long> {
 
     List<Product> findAllByCategory(Category category);
 
-    Optional<Product> findByCategory(Category category);
+    List<Product> findByCategory(Category category);
 }

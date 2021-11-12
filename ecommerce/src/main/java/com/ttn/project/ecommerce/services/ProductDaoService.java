@@ -58,11 +58,18 @@ public class ProductDaoService {
         return "product added successfully";
     }
 
-    public Product viewProduct(long productId){
+    public Product viewProduct(long sellerId, long productId) throws Exception {
+        Seller loggedInSeller = sellerRepository.findById(sellerId).get();
         Optional<Product> productById = productRepository.findById(productId);
         if (!productById.isPresent())
             throw new ProductNotFoundException("Product not found with product id = " + productId);
         Product product = productById.get();
+        long createrSellerId = product.getSeller().getId();
+        if (sellerId != createrSellerId)
+            throw new Exception("logged in user is not creater of the product");
+
+        if (product.isDeleted())
+            throw new Exception("Product should be non-deleted");
         return product;
     }
 
@@ -70,13 +77,19 @@ public class ProductDaoService {
         return (List<Product>) productRepository.findAll();
     }
 
-    public String updateProduct(long productId, Product product){
+
+    public String updateProduct(long sellerId, long productId, Product product){
         System.out.println("name " + product.getName() + " description " + product.getDescription()
             + "  cancellable " + product.isCancellable());
         Optional<Product> productById = productRepository.findById(productId);
         if (!productById.isPresent())
             throw new ProductNotFoundException("Product not found with productId " + productId);
+
         Product product1 = productById.get();
+        long creatorSellerId = product1.getSeller().getId();
+        if (sellerId != creatorSellerId)
+            return "logged in user is not creator of the product";
+
         if (product.getName() != null)
             product1.setName(product.getName());
         if (product.getDescription() !=  null)
@@ -89,12 +102,17 @@ public class ProductDaoService {
         return "Product updated successfully";
     }
 
-    public String deleteProduct(long productId){
+    public String deleteProduct(long sellerId,long productId){
         Optional<Product> productById = productRepository.findById(productId);
         if (!productById.isPresent())
             throw new ProductNotFoundException("Product not found with productId " + productId);
         Product product = productById.get();
-        productRepository.delete(product);
+        long creatorSellerId = product.getSeller().getId();
+        if (sellerId != creatorSellerId)
+            return "logged in user is not creator of the product";
+
+        product.setDeleted(true);
+     //   productRepository.delete(product);
         return "product deleted successfully";
     }
 

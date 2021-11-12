@@ -29,10 +29,11 @@ public class ProductVariation {
     private boolean isActive;
 
     // how to store json?
+    @Column(columnDefinition = "JSON")
     private String metadata;
 
     //String or byte[] ?
-   // private byte[] primaryImageName;
+    private String primaryImageName;
 
     @NotNull
     @ManyToOne

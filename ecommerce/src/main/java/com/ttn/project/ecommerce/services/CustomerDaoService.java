@@ -247,6 +247,7 @@ public class CustomerDaoService {
             Optional<Address> address = addressRepository.findById(address_id);
             if (address.isPresent()){
                 Address address1 = address.get();
+
                 List<Address> add = customer.get().getAddresses();
                 add = add.stream().filter(p->p.getId() != address_id).collect(Collectors.toList());
                 customer.get().setAddresses(add);

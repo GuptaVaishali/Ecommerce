@@ -119,6 +119,15 @@ public class Product {
         isActive = active;
     }
 
+
+    public boolean isDeleted() {
+        return isDeleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        isDeleted = deleted;
+    }
+
     public Seller getSeller() {
         return seller;
     }
@@ -143,6 +152,7 @@ public class Product {
     public void setProductVariations(List<ProductVariation> productVariations) {
         this.productVariations = productVariations;
     }
+
 
     public List<ProductReview> getProductReviews() {
         return productReviews;
