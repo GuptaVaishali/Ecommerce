@@ -1,10 +1,12 @@
 package com.ttn.project.ecommerce.entities.registration;
 
+import org.springframework.security.core.GrantedAuthority;
+
 import javax.persistence.*;
 import java.util.List;
 
 @Entity
-public class Role {
+public class Role implements GrantedAuthority {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -15,7 +17,7 @@ public class Role {
 //    @JoinTable(name = "User_Role",
 //                joinColumns = @JoinColumn(name = "ROLE_ID", referencedColumnName = "id"),
 //                inverseJoinColumns = @JoinColumn(name = "USER_ID", referencedColumnName = "id"))
-    @ManyToMany(mappedBy = "roles", cascade = CascadeType.ALL, fetch =FetchType.EAGER )
+    @ManyToMany(mappedBy = "roles", cascade = CascadeType.ALL)
     private List<User> users;
 
     //getters and setters
@@ -36,11 +38,11 @@ public class Role {
         this.authority = authority;
     }
 
-    public List<User> getUsers() {
-        return users;
-    }
-
-    public void setUsers(List<User> users) {
-        this.users = users;
-    }
+//    public List<User> getUsers() {
+//        return users;
+//    }
+//
+//    public void setUsers(List<User> users) {
+//        this.users = users;
+//    }
 }

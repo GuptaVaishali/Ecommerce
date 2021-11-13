@@ -1,15 +1,12 @@
 package com.ttn.project.ecommerce.controllers;
 
-import com.ttn.project.ecommerce.entities.product.Category;
 import com.ttn.project.ecommerce.entities.product.CategoryMetadataField;
-import com.ttn.project.ecommerce.entities.product.CategoryMetadataFieldRelation;
 import com.ttn.project.ecommerce.services.MetadataFieldService;
 import com.ttn.project.ecommerce.services.MetadataFieldValueHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 public class MetadataFieldController {
@@ -22,13 +19,13 @@ public class MetadataFieldController {
         return metadataFieldService.createMetadataField(categoryMetadataField);
     }
 
-    @GetMapping("view-metadatafields")
+    @GetMapping("/view-metadatafields")
     public List<CategoryMetadataField> viewAllMetadataFields(){
-        return metadataFieldService.viewAllMetadataFields();
+            return metadataFieldService.viewAllMetadataFields();
     }
 
 
-    @PostMapping("create-metadatafieldvalue/{categoryId}/{metadataFieldId}")
+    @PostMapping("/create-metadatafieldvalue/{categoryId}/{metadataFieldId}")
     public String createMetadataFieldValues(@PathVariable long categoryId,
                                             @PathVariable long metadataFieldId,
                                             @RequestBody MetadataFieldValueHelper metadataFieldValues){
@@ -36,7 +33,7 @@ public class MetadataFieldController {
                  metadataFieldValues);
     }
 
-    @PutMapping("update-metadatafieldvalue/{categoryId}/{metadataFieldId}")
+    @PutMapping("/update-metadatafieldvalue/{categoryId}/{metadataFieldId}")
     public String updateMetadataFieldValues(@PathVariable long categoryId,
                                             @PathVariable long metadataFieldId,
                                             @RequestBody MetadataFieldValueHelper metadataFieldValues){

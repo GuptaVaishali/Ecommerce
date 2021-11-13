@@ -26,12 +26,12 @@ public class CategoryController {
         return categoryService.createCategory1(category);
     }
 
-    @GetMapping("view-category/{categoryId}")
+    @GetMapping("/view-category/{categoryId}")
     public Category viewCategory(@PathVariable Long categoryId){
         return categoryService.viewCategory(categoryId);
     }
 
-    @GetMapping("view-all-categories")
+    @GetMapping("/view-all-categories")
     public List<Category> viewAllCategories(){
         return categoryService.viewAllCategories();
     }

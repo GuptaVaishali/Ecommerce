@@ -1,5 +1,6 @@
 package com.ttn.project.ecommerce.services;
 
+import com.ttn.project.ecommerce.dto.ProductVariationUpdateDto;
 import com.ttn.project.ecommerce.entities.product.Category;
 import com.ttn.project.ecommerce.entities.product.CategoryMetadataFieldRelation;
 import com.ttn.project.ecommerce.entities.product.Product;
@@ -14,9 +15,7 @@ import org.springframework.stereotype.Service;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.Iterator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class ProductVariationService {
@@ -41,7 +40,6 @@ public class ProductVariationService {
         if (!product1.isActive() || product1.isDeleted())
             return "product should be active and non-deleted";
 
-    // todo : validate
 
         Category category = product1.getCategory();
         long catId = category.getId();      // list of category id aayegi till parent categoryid
@@ -49,22 +47,37 @@ public class ProductVariationService {
         List<CategoryMetadataFieldRelation> categoryMetadataFieldValuesList
                 = metadataFieldValuesRepository.findByCategoryId(catId);
 
+        Map<Object,String> meta = new LinkedHashMap<>();
+
         for (CategoryMetadataFieldRelation categoryMetadataFieldRelation : categoryMetadataFieldValuesList) {
-            System.out.println("fieldId >> " + categoryMetadataFieldRelation.getCategoryMetadataField().getId()
-                    + " fieldname >> " + categoryMetadataFieldRelation.getCategoryMetadataField().getName()
-            + " values>>> " + categoryMetadataFieldRelation.getValue());
+//            System.out.println("fieldId >> " + categoryMetadataFieldRelation.getCategoryMetadataField().getId()
+//                    + " fieldname >> " + categoryMetadataFieldRelation.getCategoryMetadataField().getName()
+//            + " values>>> " + categoryMetadataFieldRelation.getValue());
+
+            meta.put(categoryMetadataFieldRelation.getCategoryMetadataField().getName(),
+                    categoryMetadataFieldRelation.getValue());
         }
 
-        System.out.println("check till now");
-
         String metadata = productVariation.getMetadata();
-        System.out.println("metadata string >>> " + metadata);
+    //    System.out.println("metadata string >>> " + metadata);
+
+        System.out.println(meta);
+
         JSONObject jsonObj = new JSONObject(metadata);
         Iterator keys = jsonObj.keys();
         while(keys.hasNext()){
             String currentKey = (String)keys.next();
-            String currentValue = jsonObj.getString(currentKey);    // the data type would not always object
-            System.out.println("Key values obtained>>>>> " + currentKey +  " " + currentValue);
+
+            if (meta.get(currentKey) == null){
+                return "meta value mismatch";
+            }
+
+            if (!meta.get(currentKey).contains(jsonObj.getString(currentKey))){
+                return "invalid value in meta field";
+            }
+
+        //    String currentValue = jsonObj.getString(currentKey);    // the data type would not always string object
+        //    System.out.println("Key values obtained>>>>> " + currentKey +  " " + currentValue);
         }
 
         productVariationRepository.save(productVariation);
@@ -96,12 +109,13 @@ public class ProductVariationService {
         if(!productById.isPresent())
             throw new ProductNotFoundException("Product id is not valid");
         List<ProductVariation> allById =
-                (List<ProductVariation>) productVariationRepository.findAllById(productId);
+                (List<ProductVariation>) productVariationRepository.findAllByProduct(productById.get());
 
         return allById;
     }
 
-    public String updateProductVariation(long productVariationId,ProductVariation productVariation){
+    public String updateProductVariation(long productVariationId,
+                                         ProductVariationUpdateDto productVariation){
         Optional<ProductVariation> productVariationById =
                 productVariationRepository.findById(productVariationId);
         if (!productVariationById.isPresent())
@@ -118,7 +132,7 @@ public class ProductVariationService {
         if (productVariation.isActive() != false)
             productVariation1.setActive(productVariation.isActive());
 
-        productVariationRepository.save(productVariation);
+        productVariationRepository.save(productVariation1);
         return "Product variation updated successfully";
     }
 

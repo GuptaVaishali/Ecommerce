@@ -37,6 +37,11 @@ public class UserController {
 //        return savedUser;
 //    }
 
+    @GetMapping("/admin/home")
+    public String adminHome(){
+        System.out.println("inside admin home");
+        return "Admin home";
+    }
 
 //    creating employee and send response status created 201.
     @PostMapping("/users")

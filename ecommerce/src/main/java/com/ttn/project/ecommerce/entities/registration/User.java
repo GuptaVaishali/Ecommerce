@@ -7,6 +7,8 @@ import com.ttn.project.ecommerce.validations.PasswordMatches;
 import com.ttn.project.ecommerce.validations.UniqueEmail;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
@@ -76,7 +78,8 @@ public class User extends Auditable<String> {
     private List<Address> addresses;
 
     //@ManyToMany(mappedBy = "users", cascade = CascadeType.ALL, fetch =FetchType.EAGER )
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+    @Fetch(value = FetchMode.SUBSELECT)
     @JoinTable(name = "User_Role",
                 joinColumns = @JoinColumn(name = "USER_ID", referencedColumnName = "id"),
                 inverseJoinColumns = @JoinColumn(name = "ROlE_ID", referencedColumnName = "id"))

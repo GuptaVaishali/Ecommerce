@@ -1,5 +1,6 @@
 package com.ttn.project.ecommerce.controllers;
 
+import com.ttn.project.ecommerce.dto.ProductVariationUpdateDto;
 import com.ttn.project.ecommerce.entities.product.ProductVariation;
 import com.ttn.project.ecommerce.entities.registration.Seller;
 import com.ttn.project.ecommerce.services.ProductVariationService;
@@ -41,7 +42,8 @@ public class ProductVariationController {
 
     @PutMapping("/update-product-variation/{productVariationId}")
     public String updateProductVariation(@PathVariable long productVariationId,
-                                         @RequestBody ProductVariation productVariation){
+                                         @Valid @RequestBody ProductVariationUpdateDto
+                                                 productVariation){
 
         return productVariationService.updateProductVariation(productVariationId, productVariation);
     }

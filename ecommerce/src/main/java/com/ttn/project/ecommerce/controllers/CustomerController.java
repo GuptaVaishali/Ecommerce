@@ -49,12 +49,6 @@ public class CustomerController {
         return "Customer home";
     }
 
-    @GetMapping("/admin/home")
-    public String adminHome(){
-        System.out.println("inside admin home");
-        return "Admin home";
-    }
-
 
     @GetMapping("/customerusers")
     public List<Customer> retrieveAllCustomers() {
