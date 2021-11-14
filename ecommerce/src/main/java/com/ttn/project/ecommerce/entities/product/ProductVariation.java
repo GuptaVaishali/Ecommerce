@@ -1,6 +1,7 @@
 package com.ttn.project.ecommerce.entities.product;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.ttn.project.ecommerce.auditing.Auditable;
 import com.ttn.project.ecommerce.entities.order.Cart;
 import com.ttn.project.ecommerce.entities.order.OrderProduct;
 
@@ -11,7 +12,7 @@ import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Entity
-public class ProductVariation {
+public class ProductVariation extends Auditable<String> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

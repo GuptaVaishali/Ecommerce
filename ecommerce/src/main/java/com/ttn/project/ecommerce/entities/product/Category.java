@@ -2,6 +2,7 @@ package com.ttn.project.ecommerce.entities.product;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.ttn.project.ecommerce.auditing.Auditable;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
@@ -9,7 +10,7 @@ import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Entity
-public class Category {
+public class Category extends Auditable<String> {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;

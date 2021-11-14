@@ -60,7 +60,7 @@ public class SellerDaoService {
         SimpleBeanPropertyFilter filter=SimpleBeanPropertyFilter.filterOutAllExcept(
                 "id", "firstName","lastName","email","isActive","gst",
                 "companyName","companyContact","city","state","country",
-                "addressLine","zipCode" //,"addresses"
+                "addressLine","zipCode" ,"addresses"
         );
 
         //creating filter using FilterProvider class
@@ -104,10 +104,16 @@ public class SellerDaoService {
 
         Optional<Seller> sellerById = sellerRepository.findById(id);
         if (sellerById.isPresent()){
+            if(!password.matches
+                    ("((?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%]).{8,15})"))
+                return "password is not valid";
+            if(!confirmPassword.matches
+                    ("((?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%]).{8,15})"))
+                return "confirm password is not valid";
+
             Seller seller = sellerById.get();
             String oldPassword = seller.getPassword();
             String newPassword = passwordEncoder.encode(password);
-            System.out.println(newPassword);
             if(password.equals(confirmPassword)) {
                 if (!oldPassword.equals(newPassword)) {
                     seller.setPassword(newPassword);

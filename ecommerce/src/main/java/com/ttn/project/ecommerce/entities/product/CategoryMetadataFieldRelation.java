@@ -1,11 +1,13 @@
 package com.ttn.project.ecommerce.entities.product;
 
+import com.ttn.project.ecommerce.auditing.Auditable;
+
 import javax.persistence.*;
 import java.util.List;
 
 @Entity
 @Table(name = "CATEGORY_METADATA_FIELD_VALUES")
-public class CategoryMetadataFieldRelation {
+public class CategoryMetadataFieldRelation extends Auditable<String> {
 
     @EmbeddedId
     private CategoryMetadataFieldKey id = new CategoryMetadataFieldKey();

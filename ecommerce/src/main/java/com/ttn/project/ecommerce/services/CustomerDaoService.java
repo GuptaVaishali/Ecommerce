@@ -24,9 +24,6 @@ public class CustomerDaoService {
     CustomerRepository customerRepository;
 
     @Autowired
-    RoleRepository roleRepository;
-
-    @Autowired
     PasswordEncoder passwordEncoder;
 
     @Autowired
@@ -44,39 +41,21 @@ public class CustomerDaoService {
     @Autowired
     AddressRepository addressRepository;
 
-//    @Bean
-//    public static BCryptPasswordEncoder bCryptPasswordEncoder() {
-//        return new BCryptPasswordEncoder();
-//    }
 
 
     //create customer user
     public Customer createCustomerUser(Customer customer){
-        System.out.println("inside customerdaoserrvice creating customer user");
+        System.out.println("inside customer dao service creating customer user");
         List<Role> roles = new ArrayList<>();
 //        Role role  = roleRepository.findById(3l).get();
 //        System.out.println(">>>>>>>>>>>>>>>>>>>." + role.getAuthority());
 //        roles.add(role);
 
         customer.setPassword(passwordEncoder.encode(customer.getPassword()));
-        System.out.println(">>>>>>>>>>>>>  Password encoded " + passwordEncoder.encode(customer.getPassword()));
         Role role1 = new Role();
         role1.setAuthority("ROLE_CUSTOMER");
         roles.add(role1);
         customer.setRoles(roles);
-
-//        List<Address> addresses = new ArrayList<>();
-//        Address address = new Address();
-//        address.setAddressLine("house no. 123");
-//        address.setCity("ballabgarh");
-//        address.setCountry("India");
-//        address.setLabel("home");
-//        address.setState("Haryana");
-//        address.setZipCode("121004");
-//        addresses.add(address);
-//        address.setUser(customer);
-
-//        customer.setAddresses(addresses);
         return customerRepository.save(customer);
     }
 
@@ -107,7 +86,7 @@ public class CustomerDaoService {
         );
 
         //creating filter using FilterProvider class
-        FilterProvider filters = new SimpleFilterProvider().addFilter("CustomerFilter",filter);
+        FilterProvider filters = new SimpleFilterProvider().addFilter("customerFilter",filter);
 
         //constructor of MappingJacksonValue class  that has bean as constructor argument
         MappingJacksonValue mapping = new MappingJacksonValue(customer);
@@ -130,7 +109,7 @@ public class CustomerDaoService {
         );
 
         //creating filter using FilterProvider class
-        FilterProvider filters = new SimpleFilterProvider().addFilter("CustomerFilter",filter);
+        FilterProvider filters = new SimpleFilterProvider().addFilter("customerFilter",filter);
 
         //constructor of MappingJacksonValue class  that has bean as constructor argument
         MappingJacksonValue mapping = new MappingJacksonValue(customer);
@@ -172,6 +151,13 @@ public class CustomerDaoService {
 
         Optional<Customer> customerById = customerRepository.findById(id);
         if (customerById.isPresent()){
+            if(!password.matches
+                    ("((?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%]).{8,15})"))
+                return "password is not valid";
+            if(!confirmPassword.matches
+                    ("((?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%]).{8,15})"))
+                return "confirm password is not valid";
+
             Customer customer = customerById.get();
             String oldPassword = customer.getPassword();
             String newPassword = passwordEncoder.encode(password);
@@ -230,10 +216,7 @@ public class CustomerDaoService {
             throw new UserNotFoundException("User not found with id " + id);
         else{
             Customer customer1 = customer.get();
-//            List<Address> addresses = new ArrayList<>();
             address.setUser(customer1);
-//            addresses.add(address);
-//            customer1.setAddresses(addresses);
             addressRepository.save(address);
             return "Address added for customer successfully";
         }

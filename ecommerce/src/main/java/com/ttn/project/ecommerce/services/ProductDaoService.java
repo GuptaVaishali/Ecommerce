@@ -66,7 +66,7 @@ public class ProductDaoService {
         Product product = productById.get();
         long createrSellerId = product.getSeller().getId();
         if (sellerId != createrSellerId)
-            throw new Exception("logged in user is not creater of the product");
+            throw new Exception("logged in user is not creator of the product");
 
         if (product.isDeleted())
             throw new Exception("Product should be non-deleted");

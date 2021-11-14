@@ -22,6 +22,7 @@ public class TokenService {
 
     @Autowired
     TokenRepository tokenRepo;
+
     @Autowired
     UserRepository userRepo;
 
@@ -40,11 +41,11 @@ public class TokenService {
 //    }
 
     public Token createToken(User user){
-        String tokenValue = new String(Base64.encodeBase64URLSafe(DEFAULT_TOKEN_GENERATOR.generateKey()), US_ASCII); // this is a sample, you can adapt as per your security need
+        String tokenValue = new String(Base64.encodeBase64URLSafe(DEFAULT_TOKEN_GENERATOR.generateKey()), US_ASCII);
         Token token = new Token(user);
         token.setToken(tokenValue);
         System.out.println("token value " + tokenValue);
-        token.setExpireAt(LocalDateTime.now().plusSeconds(999999999));
+        token.setExpireAt(LocalDateTime.now().plusSeconds(10800));
     //    token.setExpireAt(LocalDateTime.now().plusSeconds(1l));
         token.setEmail(user.getEmail());
         tokenRepo.save(token);
@@ -57,11 +58,11 @@ public class TokenService {
         Token newToken = new Token(token.getUser());
         newToken.setToken(newTokenValue);
         System.out.println("newToken value " + newTokenValue);
-        newToken.setExpireAt(LocalDateTime.now().plusSeconds(999999999));
+        newToken.setExpireAt(LocalDateTime.now().plusSeconds(10800));
         newToken.setEmail(token.getUser().getEmail());
         tokenRepo.save(newToken);
 
-//        token.setExpireAt(LocalDateTime.now().plusSeconds(999999999));
+//        token.setExpireAt(LocalDateTime.now().plusSeconds(10800));
 //        token.setToken(newTokenValue);
 //        tokenRepo.save(token);
         return newToken;
@@ -72,7 +73,7 @@ public class TokenService {
         Token forgotPasswordToken = new Token(userRepo.findByEmail(email).get());
         forgotPasswordToken.setForgotPassToken(tokenValue);
         System.out.println("token value " + tokenValue);
-        forgotPasswordToken.setExpireAt(LocalDateTime.now().plusSeconds(999999999));
+        forgotPasswordToken.setExpireAt(LocalDateTime.now().plusSeconds(900));
         //    token.setExpireAt(LocalDateTime.now().plusSeconds(1l));
         forgotPasswordToken.setEmail(email);
         tokenRepo.save(forgotPasswordToken);
@@ -80,10 +81,8 @@ public class TokenService {
     }
 
     public String checkFpTokenValidity(String token){
-        System.out.println(">>>>> inside checkFpToken validiy function");
         String str = null;
         Token fpToken = tokenRepo.findByForgotPassToken(token);
-        System.out.println(">>>>>>>>>>>>> forgot password token value" + fpToken.getForgotPassToken());
         if (fpToken == null){
             str =  "Token is not valid";
         }

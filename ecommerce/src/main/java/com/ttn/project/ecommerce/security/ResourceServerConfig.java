@@ -57,9 +57,11 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
                 .antMatchers("/register-seller").permitAll()
                 .antMatchers("/forgot-password-token").permitAll()
                 .antMatchers("/change-password").permitAll()
+
                 .antMatchers("/admin/home").hasAnyRole("ADMIN")
                 .antMatchers("/customer/home").hasAnyRole("CUSTOMER")
                 .antMatchers("/seller/home").hasAnyRole("SELLER")
+
                 .antMatchers("/get-customers").hasAnyRole("ADMIN")
                 .antMatchers("/get-sellers").hasAnyRole("ADMIN")
                 .antMatchers("/activate-customer").hasAnyRole("ADMIN")

@@ -50,8 +50,8 @@ public class Bootstrap implements ApplicationRunner {
             User user = new User();
             user.setFirstName("Sreyasi");
             user.setLastName("Raghu");
-            user.setEmail("vaishgupt97@gmail.com");
-            user.setPassword( passwordEncoder.encode("admin@123"));
+            user.setEmail("sreyasi97@gmail.com");
+            user.setPassword( passwordEncoder.encode("Admin@123"));
 
             List<Address> addresses = new ArrayList<>();
             Address address = new Address();

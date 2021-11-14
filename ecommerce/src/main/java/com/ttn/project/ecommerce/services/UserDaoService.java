@@ -5,10 +5,7 @@ import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import com.ttn.project.ecommerce.entities.registration.*;
 import com.ttn.project.ecommerce.exceptions.UserNotFoundException;
-import com.ttn.project.ecommerce.repos.AddressRepository;
-import com.ttn.project.ecommerce.repos.CustomerRepository;
-import com.ttn.project.ecommerce.repos.SellerRepository;
-import com.ttn.project.ecommerce.repos.UserRepository;
+import com.ttn.project.ecommerce.repos.*;
 import com.ttn.project.ecommerce.security.AppUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -47,6 +44,9 @@ public class UserDaoService {
     @Autowired
     EmailSenderService emailSenderService;
 
+    @Autowired
+    TokenRepository tokenRepository;
+
     //create user
     public User createUser(User user){
         List<Role> roles = new ArrayList<>();
@@ -66,28 +66,45 @@ public class UserDaoService {
 
     public String checkEmail(String email){
         Optional<User> user1 = userRepository.findByEmail(email);
-        User user = user1.get();
         String str = null;
-        if(user == null) {
+
+        // check if forgot password token already exists, if exist then delete the token
+        Token token = tokenRepository.findByEmail(email);
+        if (token!=null)
+            tokenRepository.delete(token);
+
+        if(!user1.isPresent()) {
             str =  "Email does not exist in db";
         }else {
+            User user = user1.get();
             if (user.isActive() == false)
                 str = "User is not active";
         }
         return str;
     }
 
-    public void changeUserPassword(User user, String password){
-        user.setPassword(passwordEncoder.encode(password));
-        userRepository.save(user);
-        System.out.println("changed Password " + user.getPassword());
+    public String changeUserPassword(Token token,User user, String password, String confirmPassword){
+        if(!password.matches
+                ("((?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%]).{8,15})"))
+            return "password is not valid";
+        if(!confirmPassword.matches
+                ("((?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%]).{8,15})"))
+            return "confirm password is not valid";
+        if (!password.equals(confirmPassword))
+            return "Password and confirm password do not match";
+        else {
+            user.setPassword(passwordEncoder.encode(password));
+            userRepository.save(user);
+            tokenRepository.delete(token);
+            return "password changed";
+        }
     }
 
     public MappingJacksonValue getCustomers(String pageSize, String pageOffset,
-                                            String sortBy, String email) {
-        Pageable pageable = PageRequest.of(Integer.parseInt(pageSize),
-                Integer.parseInt(pageOffset),
-                Sort.by(new Sort.Order(Sort.Direction.DESC,"id")));
+                                            String sortBy) {
+        Pageable pageable = PageRequest.of(Integer.parseInt(pageOffset),
+                Integer.parseInt(pageSize),
+                Sort.by(new Sort.Order(Sort.Direction.DESC,sortBy)));
         List<Customer> customerList = customerRepository.findAll(pageable);
 
         //invoking static method filterOutAllExcept()

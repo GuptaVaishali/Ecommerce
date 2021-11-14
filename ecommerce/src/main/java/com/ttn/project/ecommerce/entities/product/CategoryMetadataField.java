@@ -1,13 +1,14 @@
 package com.ttn.project.ecommerce.entities.product;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.ttn.project.ecommerce.auditing.Auditable;
 
 import javax.persistence.*;
 import java.util.List;
 
 @Entity
 @Table(name = "CATEGORY_METADATA_FIELD")
-public class CategoryMetadataField {
+public class CategoryMetadataField extends Auditable<String> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

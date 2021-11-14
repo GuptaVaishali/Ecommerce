@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.ttn.project.ecommerce.auditing.Auditable;
 import com.ttn.project.ecommerce.entities.registration.Seller;
 
 import javax.persistence.*;
@@ -12,7 +13,7 @@ import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Entity
-public class Product {
+public class Product extends Auditable<String> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

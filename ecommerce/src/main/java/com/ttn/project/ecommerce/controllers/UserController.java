@@ -94,23 +94,24 @@ public class UserController {
                                      @RequestParam("confirmPassword") String confirmPassword) {
 
         String str = tokenService.checkFpTokenValidity(fpToken);
-//        System.out.println("returned String value >>>> " + str);
+        // if token is valid
         if (str == null) {
-//            System.out.println(">>>>>>>>>>>>> if token is valid");
             Token token = tokenService.findTokenByForgetPasswordToken(fpToken);
             if (token != null) {
-//                System.out.println(">>>>>>>>>>>> if user exists having fp token");
-                userDaoService.changeUserPassword(token.getUser(),password);
-
-//                System.out.println(">>>>>>>>>>>>> Password changed");
-
-                SimpleMailMessage mailMessage = new SimpleMailMessage();
-                mailMessage.setTo(token.getUser().getEmail());
-                mailMessage.setSubject("Password Updated");
-                mailMessage.setFrom("vaishgupta97@gmail.com");
-                mailMessage.setText("Password updated Successfully");
-                emailSenderService.sendEmail(mailMessage);
-                return "Please check your mail to know password change status";
+                String passStatus =
+                        userDaoService.changeUserPassword(token,token.getUser(),password, confirmPassword);
+                // if password changed successfully
+                if (passStatus.equals("password changed")) {
+                    SimpleMailMessage mailMessage = new SimpleMailMessage();
+                    mailMessage.setTo(token.getUser().getEmail());
+                    mailMessage.setSubject("Password Updated");
+                    mailMessage.setFrom("vaishgupta97@gmail.com");
+                    mailMessage.setText("Password updated Successfully");
+                    emailSenderService.sendEmail(mailMessage);
+                    return "Please check your mail to know password change status";
+                }
+                else
+                    return passStatus;
             }
             return "user does not exists having this token";
         } else
@@ -120,9 +121,8 @@ public class UserController {
     @GetMapping("/get-customers")
     public MappingJacksonValue getCustomers(@RequestParam(name = "pageSize",required = false) String pageSize,
                                             @RequestParam(name = "pageOffset" ,required = false) String pageOffset,
-                                            @RequestParam(name= "sortBy", required = false) String sortBy,
-                                            @RequestParam(name = "email" ,required = false) String email) {
-        return userDaoService.getCustomers(pageSize, pageOffset, sortBy,email);
+                                            @RequestParam(name= "sortBy", required = false) String sortBy) {
+        return userDaoService.getCustomers(pageSize, pageOffset, sortBy);
     }
 
     @GetMapping("/get-sellers")
@@ -135,22 +135,22 @@ public class UserController {
         return userDaoService.createAddress(userId, address);
     }
 
-    @PutMapping("/activate-customer")
+    @PatchMapping("/activate-customer")
     public String activateCustomer(@RequestParam long custId){
         return userDaoService.activateCustomer(custId);
     }
 
-    @PutMapping("/deactivate-customer")
+    @PatchMapping("/deactivate-customer")
     public String deActivateCustomer(@RequestParam long custId){
         return userDaoService.deActivateCustomer(custId);
     }
 
-    @PutMapping("/activate-seller")
+    @PatchMapping("/activate-seller")
     public String activateSeller(@RequestParam long sellerId){
         return userDaoService.activateSeller(sellerId);
     }
 
-    @PutMapping("/deactivate-seller")
+    @PatchMapping("/deactivate-seller")
     public String deActivateSeller(@RequestParam long sellerId){
         return userDaoService.deActivateSeller(sellerId);
     }
@@ -160,7 +160,7 @@ public class UserController {
     public String logout(HttpServletRequest request){
         String authHeader = request.getHeader("Authorization");
         if (authHeader != null) {
-            String tokenValue = authHeader.replace("Bearer", "").trim();
+            String tokenValue = authHeader.replace("bearer", "").trim();
             OAuth2AccessToken accessToken = tokenStore.readAccessToken(tokenValue);
             tokenStore.removeAccessToken(accessToken);
         }

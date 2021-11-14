@@ -13,8 +13,7 @@ public class AuditorAwareImpl implements AuditorAware<String> {
     public Optional<String> getCurrentAuditor() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         AppUser appUser = (AppUser) authentication.getPrincipal();
-       // String firstName = appUser.getFirstName();
-       // return Optional.ofNullable(firstName);
-        return null;
+        String firstName = appUser.getFirstName();
+        return Optional.ofNullable(firstName);
     }
 }

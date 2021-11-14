@@ -11,7 +11,7 @@ import javax.validation.constraints.NotNull;
 
 @Entity
 @PrimaryKeyJoinColumn(name = "user_id")
-@JsonFilter("CustomerFilter")
+@JsonFilter("customerFilter")
 public class Customer extends User {
 
     @Column(name = "CONTACT")

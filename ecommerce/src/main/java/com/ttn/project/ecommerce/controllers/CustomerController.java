@@ -22,6 +22,7 @@ import java.net.URI;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 public class CustomerController {
@@ -37,6 +38,12 @@ public class CustomerController {
 
     @Autowired
     TokenService tokenService;
+
+    @Autowired
+    UserRepository userRepository;
+
+    @Autowired
+    TokenRepository tokenRepository;
 
     @GetMapping("/")
     public String index(){
@@ -66,9 +73,8 @@ public class CustomerController {
     //  creating employee and send response status created 201.
     @PostMapping("/register-customer")
     public ResponseEntity<Object> createUser(@Valid @RequestBody Customer customer){
-        System.out.println("inside register-customer");
+
         Customer savedCustomer = customerDaoService.createCustomerUser(customer);
-        System.out.println("savedCustomer");
         SimpleMailMessage mailMessage = new SimpleMailMessage();
         mailMessage.setTo(customer.getEmail());
         mailMessage.setSubject("Customer Activated");
@@ -84,11 +90,6 @@ public class CustomerController {
         return ResponseEntity.created(location).build();
     }
 
-    @Autowired
-    UserRepository userRepository;
-
-    @Autowired
-    TokenRepository tokenRepository;
 
     @PutMapping("/confirm-customer")
     public String confirmUserAccount(@RequestParam("token") String token)
@@ -97,6 +98,8 @@ public class CustomerController {
         if(cToken != null)
         {
             LocalDateTime now = LocalDateTime.now();
+            // if expire date is less than today's date, then token is expired
+            // when token expired, send new mail with new token
             if(ChronoUnit.SECONDS.between(now, cToken.getExpireAt()) <= 0){
                 //    cToken.setExpired(true);
                 Token newToken = tokenService.generateNewToken(cToken);
@@ -112,9 +115,7 @@ public class CustomerController {
                 return "Another mail has been sent for activation";
             }
             else {
-                System.out.println("else part activation ka");
                 User user = userRepository.findByEmail(cToken.getUser().getEmail()).get();
-                System.out.println("else part activation ka part1");
                 user.setActive(true);
                 userRepository.save(user);
 
@@ -131,23 +132,28 @@ public class CustomerController {
 
     @PostMapping("/resend-link")
     public String resendLink(@Valid @RequestParam String email){
-        User userInDb = userRepository.findByEmail(email).get();
-        System.out.println(">>>>>>>>" + userInDb.getEmail());
-        if (userInDb != null){
-        //    System.out.println(">>>>>>>>>>>Again Printing" + userInDb.getEmail());
-            Token token = tokenRepository.findByEmail(email);
-        //    System.out.println(">>>>>>>>>printing token >>> " + token.getToken());
-            tokenRepository.delete(token);
-            SimpleMailMessage mailMessage = new SimpleMailMessage();
-            mailMessage.setTo(email);
-            mailMessage.setSubject("Re-Send Activation link for customer");
-            mailMessage.setFrom("vaishgupta97@gmail.com");
-            mailMessage.setText("To confirm your account, please click here : "
-                    + "http://localhost:8080/confirm-customer?token=" +
-                    customerDaoService.generateReToken(email).getToken());
+        Optional<User> userInDb = userRepository.findByEmail(email);
 
-            emailSenderService.sendEmail(mailMessage);
-            return "Re-Activation Link send on your mail";
+        if (userInDb.isPresent()){
+            System.out.println("user is present");
+            User user = userInDb.get();
+            if (!user.isActive()) {
+                Token token = tokenRepository.findByEmail(email);
+                System.out.println(">>>>>>>>>printing token >>> " + token.getToken());
+                tokenRepository.delete(token);
+                SimpleMailMessage mailMessage = new SimpleMailMessage();
+                mailMessage.setTo(email);
+                mailMessage.setSubject("Re-Send Activation link for customer");
+                mailMessage.setFrom("vaishgupta97@gmail.com");
+                mailMessage.setText("To confirm your account, please click here : "
+                        + "http://localhost:8080/confirm-customer?token=" +
+                        customerDaoService.generateReToken(email).getToken());
+
+                emailSenderService.sendEmail(mailMessage);
+                return "Re-Activation Link send on your mail";
+            }
+            else
+                return "user is already activated";
         }
         else
             return "Email does not exist in db";
