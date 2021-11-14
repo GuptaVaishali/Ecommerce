@@ -18,21 +18,10 @@ public class JpaAuditingConfiguration {
 
         @Bean
         public AuditorAware<String> auditorProvider(){
-            /*
-            get currently logged-in user via this
-            SecurityContextHolder.getContext().getAuthentication().getName()
-            */
-            return () -> Optional.ofNullable("vaishali");
 
-//            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//            AppUser appUser = (AppUser) authentication.getPrincipal();
-//            String name = appUser.getFirstName();
-//            String uname = getLoggedInUserName();
-//            System.out.println(">>>>>>>> name = " + uname);
-        //    return () -> Optional.ofNullable(uname);
+        //    return () -> Optional.ofNullable("vaishali");
 
-
-        //    return new AuditorAwareImpl();
+            return new AuditorAwareImpl();
         }
 
 }
